@@ -25,7 +25,7 @@
   let xr = null;
 
   if (navigator.xr) navigator.xr.isSessionSupported("immersive-ar")
-    .then((ok) => ok && import(new URL("js/ar-xr.js?v=2d173d3e", location.href).href).then((m) => { xr = m; }))
+    .then((ok) => ok && import(new URL("js/ar-xr.js", location.href).href).then((m) => { xr = m; }))
     .catch(() => {});
 
   /* ---------- model-viewer вантажимо лише коли відкрито сторінку об’єкта ---------- */
