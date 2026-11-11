@@ -846,7 +846,7 @@ b.rl { font-weight: 700; }
   .brand { font-size: 10.5px; letter-spacing: .24em; position: relative; z-index: 2; }
 
   .hero { display: flex; flex-direction: column; justify-content: flex-end; }
-  .hero-title { position: relative; left: auto; top: auto; transform: none; padding: 32vh var(--gutter) 40px; font-size: clamp(48px, 15vw, 76px); }
+  .hero-title { position: relative; left: auto; top: auto; transform: none; padding: 32vh var(--gutter) 40px; font-size: clamp(44px, 14vw, 76px); }
   .hero-title .l2 { padding-left: .5em; }
   html[lang="en"] .hero-title { font-size: clamp(36px, 10.5vw, 64px); }
   html[lang="en"] .hero-title .l2 { padding-left: .3em; }
