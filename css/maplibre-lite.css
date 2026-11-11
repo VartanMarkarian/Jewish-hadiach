@@ -1,0 +1,36 @@
+/* Мінімальні стилі MapLibre GL, потрібні сайту (замість повного maplibre-gl.css з CDN). */
+.maplibregl-map { position: relative; overflow: hidden; -webkit-tap-highlight-color: rgba(0,0,0,0); }
+.maplibregl-canvas { position: absolute; left: 0; top: 0; }
+.maplibregl-canvas-container.maplibregl-interactive { cursor: grab; }
+.maplibregl-canvas-container.maplibregl-interactive:active { cursor: grabbing; }
+.maplibregl-marker { position: absolute; left: 0; top: 0; will-change: transform; }
+
+.maplibregl-ctrl-bottom-right { position: absolute; right: 0; bottom: 0; z-index: 2; pointer-events: none; }
+.maplibregl-ctrl { clear: both; pointer-events: auto; transform: translate(0); }
+.maplibregl-ctrl-bottom-right .maplibregl-ctrl { float: right; margin: 0 10px 10px 0; }
+
+.maplibregl-ctrl-attrib { padding: 2px 8px; font: 10px/1.6 "Fixel Text", system-ui, sans-serif; border-radius: 12px; }
+.maplibregl-ctrl-attrib a { text-decoration: none; }
+.maplibregl-ctrl-attrib a:hover { text-decoration: underline; }
+.maplibregl-ctrl-attrib-button { display: none; }
+.maplibregl-ctrl-attrib.maplibregl-compact { position: relative; min-height: 22px; padding: 2px 24px 2px 0; }
+.maplibregl-ctrl-attrib.maplibregl-compact-show { padding: 2px 28px 2px 8px; }
+.maplibregl-ctrl-attrib.maplibregl-compact .maplibregl-ctrl-attrib-inner { display: none; }
+.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner { display: block; }
+.maplibregl-ctrl-attrib.maplibregl-compact .maplibregl-ctrl-attrib-button {
+  display: block; position: absolute; right: 0; top: 0; width: 22px; height: 22px; border: 0; border-radius: 50%;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Ccircle cx='11' cy='11' r='8' fill='none' stroke='%23D8D1C5' stroke-width='1.2'/%3E%3Ccircle cx='11' cy='7.5' r='1.1' fill='%23D8D1C5'/%3E%3Crect x='10.2' y='9.6' width='1.6' height='6' fill='%23D8D1C5'/%3E%3C/svg%3E") center / 22px no-repeat;
+  cursor: pointer;
+}
+
+.maplibregl-cooperative-gesture-screen {
+  position: absolute; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center;
+  padding: 1rem; line-height: 1.2; text-align: center; pointer-events: none;
+  opacity: 0; transition: opacity 1s ease 1s;
+}
+.maplibregl-cooperative-gesture-screen.maplibregl-show { opacity: 1; transition: opacity .05s; }
+.maplibregl-cooperative-gesture-screen .maplibregl-mobile-message { display: none; }
+@media (hover: none), (max-width: 480px) {
+  .maplibregl-cooperative-gesture-screen .maplibregl-desktop-message { display: none; }
+  .maplibregl-cooperative-gesture-screen .maplibregl-mobile-message { display: block; }
+}
