@@ -25,7 +25,7 @@
   let xr = null;
 
   if (navigator.xr) navigator.xr.isSessionSupported("immersive-ar")
-    .then((ok) => ok && import(new URL("js/ar-xr.js", location.href).href).then((m) => { xr = m; }))
+    .then((ok) => ok && import(new URL("js/ar-xr.js?v=6cc3b7a7", location.href).href).then((m) => { xr = m; }))
     .catch(() => {});
 
   /* ---------- model-viewer вантажимо лише коли відкрито сторінку об’єкта ---------- */
@@ -72,7 +72,7 @@
       "camera-controls": "", "auto-rotate": "", "auto-rotate-delay": "1500", "rotation-per-second": "14deg",
       "max-camera-orbit": "auto auto 260%", "touch-action": "pan-y" };
     Object.entries(a).forEach(([k, v]) => mv.setAttribute(k, v));
-    mv.innerHTML = `<button slot="ar-button" class="op-ar">${AR_ICON}<span>Відкрити в AR</span></button>`;
+    mv.innerHTML = `<button slot="ar-button" class="op-ar">${AR_ICON}<span>${tr("Відкрити в AR")}</span></button>`;
     // Android із WebXR — наш режим; інакше (iPhone, старі Android) model-viewer відкриє Quick Look / Scene Viewer
     mv.querySelector(".op-ar").addEventListener("click", (e) => {
       if (!xr || !curModel) return;
@@ -89,15 +89,15 @@
     $("#opMV").appendChild(mv);
     mv.addEventListener("progress", (e) => setLoad(Math.round(EMBED ? 60 + e.detail.totalProgress * 40 : e.detail.totalProgress * 100)));
     mv.addEventListener("load", () => { setLoad(100); updateARNote(); });
-    mv.addEventListener("error", () => { load.querySelector("b").textContent = "модель не завантажилась"; });
+    mv.addEventListener("error", () => { load.querySelector("b").textContent = tr("модель не завантажилась"); });
   }
 
   const touch = matchMedia("(pointer: coarse)").matches;
   function updateARNote() {
     if (mv && mv.canActivateAR) { arNote.hidden = true; return; }
     arNote.textContent = touch
-      ? "У цьому перегляді AR недоступний. Він запуститься, коли сайт буде відкрито з адреси проєкту."
-      : "AR — на телефоні: відкрийте цю сторінку в Chrome (Android) або Safari (iPhone).";
+      ? tr("У цьому перегляді AR недоступний. Він запуститься, коли сайт буде відкрито з адреси проєкту.")
+      : tr("AR — на телефоні: відкрийте цю сторінку в Chrome (Android) або Safari (iPhone).");
     arNote.hidden = false;
   }
 
@@ -105,20 +105,20 @@
   let cur = -1;
   function render(i) {
     const s = STOPS[i], nx = STOPS[(i + 1) % STOPS.length];
-    $("#opKicker").textContent = `Об’єкт ${pad(s.n)} · Точка ${s.n} · ${s.addr}, Гадяч`;
+    $("#opKicker").textContent = `${tr("Об’єкт")} ${pad(s.n)} · ${tr("Точка")} ${s.n} · ${s.addr}, ${tr("Гадяч")}`;
     $("#opTitle").textContent = s.name;
-    $("#opPoint").innerHTML = `<span class="mono">Концептуальний образ</span>«${s.concept}»`;
+    $("#opPoint").innerHTML = `<span class="mono">${tr("Концептуальний образ")}</span>${qq(s.concept)}`;
     $("#opCap").textContent = s.caption;
     $("#opLead").textContent = s.short;
     $("#opLong").innerHTML = s.long.map((p) => `<p>${p}</p>`).join("");
     $("#opTerms").innerHTML = s.terms.map(([t, d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join("");
     $("#opPlace").src = s.place;
-    $("#opPlace").alt = `Сучасний вигляд локації № ${s.n}: ${s.addr}, Гадяч`;
-    $("#opPlaceCap").textContent = `Сучасний вигляд локації · ${s.addr}, Гадяч · фото: Роксолана Дудка, 2026`;
+    $("#opPlace").alt = `${tr("Сучасний вигляд локації №")} ${s.n}: ${s.addr}, ${tr("Гадяч")}`;
+    $("#opPlaceCap").textContent = `${tr("Сучасний вигляд локації")} · ${s.addr}, ${tr("Гадяч")} · ${tr("фото: Роксолана Дудка, 2026")}`;
     $("#opCount").textContent = `${pad(s.n)} / ${pad(STOPS.length)}`;
     $("#opNextName").textContent = nx.name;
     $("#opNextImg").src = nx.render;
-    document.title = `${s.name} · Невидимі шари пам’яті`;
+    document.title = `${s.name} · ${tr("Невидимі шари пам’яті")}`;
   }
 
   async function show(i) {
@@ -133,14 +133,14 @@
     // повна адреса: url() у CSS-змінній інакше рахується від css/style.css
     stage.style.setProperty("--poster", `url("${new URL(s.render, location.href).href}")`);
     stage.classList.remove("live");
-    try { await loadMV(); } catch { load.querySelector("b").textContent = "3D-перегляд недоступний"; return; }
+    try { await loadMV(); } catch { load.querySelector("b").textContent = tr("3D-перегляд недоступний"); return; }
     ensureMV();
-    mv.setAttribute("alt", `3D-скульптура «${s.name}»`);
+    mv.setAttribute("alt", `${tr("3D-скульптура")} ${qq(s.name)}`);
     mv.setAttribute("camera-orbit", orbit(s.key));
     mv.toggleAttribute("autoplay", ANIMATED.has(s.key));
     let url;
     try { url = await modelURL(s.key, (f) => setLoad(Math.round(f * 60))); }
-    catch { load.querySelector("b").textContent = "модель не завантажилась"; return; }
+    catch { load.querySelector("b").textContent = tr("модель не завантажилась"); return; }
     if (cur !== i) return;
     if (EMBED) mv.removeAttribute("ios-src"); else mv.setAttribute("ios-src", `models/${s.key}_ar.usdz${window.USDZ_V && window.USDZ_V[s.key] ? `?v=${window.USDZ_V[s.key]}` : ""}`);
     mv.setAttribute("src", url);
@@ -157,7 +157,7 @@
   const au = $("#opAudioEl"), auBox = $("#opAudio"), auBtn = $("#opPlay"), auBar = $("#opAudBar"), auFill = $("#opAudFill"), auTime = $("#opAudTime");
   const mmss = (t) => (isFinite(t) ? `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, "0")}` : "0:00");
   const audioURL = (s) => {
-    const id = `ua/${s.n}_${s.key}`;
+    const id = `${window.LANG === "en" ? "en" : "ua"}/${s.n}_${s.key}`;   // англійською — своя озвучка
     return window.AUDIO_FILES ? window.AUDIO_FILES[id] : `media/audio/${id}.mp3`;
   };
   // файл беремо повністю як blob: сервер claude.ai не віддає частини (Range), і без цього не працює перемотування
@@ -171,7 +171,7 @@
     auBox.hidden = !url;
     au.removeAttribute("src"); au.load();
     auFill.style.width = "0%"; auTime.textContent = "0:00";
-    auBtn.innerHTML = ICON_PLAY; auBtn.setAttribute("aria-label", "Слухати розгорнуту концепцію");
+    auBtn.innerHTML = ICON_PLAY; auBtn.setAttribute("aria-label", tr("Слухати розгорнуту концепцію"));
     auWant = url;
     if (!url) return;
     audioBlob(url).then((b) => { if (auWant === url) au.src = b; })
@@ -184,8 +184,8 @@
   };
   au.addEventListener("loadedmetadata", syncAudio);
   au.addEventListener("timeupdate", syncAudio);
-  au.addEventListener("play", () => { auBtn.innerHTML = ICON_PAUSE; auBtn.setAttribute("aria-label", "Пауза"); });
-  au.addEventListener("pause", () => { auBtn.innerHTML = ICON_PLAY; auBtn.setAttribute("aria-label", "Слухати розгорнуту концепцію"); });
+  au.addEventListener("play", () => { auBtn.innerHTML = ICON_PAUSE; auBtn.setAttribute("aria-label", tr("Пауза")); });
+  au.addEventListener("pause", () => { auBtn.innerHTML = ICON_PLAY; auBtn.setAttribute("aria-label", tr("Слухати розгорнуту концепцію")); });
   au.addEventListener("ended", () => { au.currentTime = 0; syncAudio(); });
   auBtn.addEventListener("click", async () => {
     if (!au.paused) { au.pause(); return; }
@@ -195,11 +195,11 @@
   // швидкість: 1× → 1,25× → 1,5× → 1×; зберігається при переході між об’єктами
   const SPEEDS = [1, 1.25, 1.5], auSpeed = $("#opSpeed");
   let speed = 1;
-  const label = (v) => String(v).replace(".", ",") + "×";
+  const label = (v) => (window.LANG === "en" ? String(v) : String(v).replace(".", ",")) + "×";
   const applySpeed = () => {
     au.defaultPlaybackRate = au.playbackRate = speed;
     auSpeed.textContent = label(speed); auSpeed.classList.toggle("on", speed !== 1);
-    auSpeed.setAttribute("aria-label", `Швидкість відтворення: ${label(speed)}`);
+    auSpeed.setAttribute("aria-label", `${tr("Швидкість відтворення")}: ${label(speed)}`);
   };
   auSpeed.addEventListener("click", () => { speed = SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length]; applySpeed(); });
   au.addEventListener("loadedmetadata", applySpeed);

@@ -16,12 +16,12 @@
     filled = true;
     $("#rObjs").innerHTML = window.STOPS.map((s) => `
       <article class="r-obj">
-        <a href="#object-${s.key}" class="r-obj-img"><img src="${s.render}" alt="Цифрова скульптура «${s.name}»" loading="lazy"></a>
-        <p class="mono">Точка ${pad(s.n)} · ${s.addr}</p>
+        <a href="#object-${s.key}" class="r-obj-img"><img src="${s.render}" alt="${tr("Цифрова скульптура")} ${qq(s.name)}" loading="lazy"></a>
+        <p class="mono">${tr("Точка")} ${pad(s.n)} · ${s.addr}</p>
         <h4><a href="#object-${s.key}">${s.name}</a></h4>
         <p class="r-obj-c"><i>${s.concept}</i></p>
         <p>${s.short}</p>
-        <a class="r-more mono" href="#object-${s.key}">Відкрити 3D-об’єкт →</a>
+        <a class="r-more mono" href="#object-${s.key}">${tr("Відкрити 3D-об’єкт →")}</a>
       </article>`).join("");
   }
 
@@ -110,7 +110,7 @@
     const segAt = (g) => { let k = 0; while (k < F.length - 1 && g >= start[k + 1]) k++; return k; };
     let cur = -1, pos = 0, want = false, speed = 1, busy = 0;
 
-    ra.info.textContent = `${fmt(T)} · українською · ШІ-голос`;
+    ra.info.textContent = `${fmt(T)} · ${tr("українською")} · ${tr("ШІ-голос")}`;
     ra.time.textContent = fmt(T);
     ra.box.hidden = false;
     // розділи: кнопки й позначки на шкалі
@@ -133,7 +133,7 @@
     const setIcon = () => {
       const playing = want;
       ra.btn.innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
-      ra.btn.setAttribute("aria-label", playing ? "Пауза" : "Слухати дослідження");
+      ra.btn.setAttribute("aria-label", playing ? tr("Пауза") : tr("Слухати дослідження"));
       ra.btn.classList.toggle("wait", busy > 0);
     };
     async function go(g, play) {
@@ -174,12 +174,12 @@
     });
     ra.chap.addEventListener("click", (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; want = true; go(+b.dataset.t + 0.01, true); });
     // швидкість: 1× → 1,25× → 1,5×
-    const SPEEDS = [1, 1.25, 1.5], label = (v) => String(v).replace(".", ",") + "×";
+    const SPEEDS = [1, 1.25, 1.5], label = (v) => (window.LANG === "en" ? String(v) : String(v).replace(".", ",")) + "×";
     ra.speedBtn.addEventListener("click", () => {
       speed = SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length];
       au.defaultPlaybackRate = au.playbackRate = speed;
       ra.speedBtn.textContent = label(speed); ra.speedBtn.classList.toggle("on", speed !== 1);
-      ra.speedBtn.setAttribute("aria-label", `Швидкість відтворення: ${label(speed)}`);
+      ra.speedBtn.setAttribute("aria-label", `${tr("Швидкість відтворення")}: ${label(speed)}`);
     });
     raPause = () => { want = false; au.pause(); setIcon(); };
     ui();
@@ -192,7 +192,7 @@
     fillObjs();
     document.body.classList.add("rp-open");
     page.hidden = false;
-    document.title = "Дослідження · Невидимі шари пам’яті";
+    document.title = `${tr("Дослідження")} · ${tr("Невидимі шари пам’яті")}`;
     layoutFlow(true);
   }
 

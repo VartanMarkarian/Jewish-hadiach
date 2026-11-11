@@ -47,7 +47,7 @@
       w.append(im);
     }
     if (item.orig) {
-      const o = new Image(); o.className = "orig"; o.src = item.orig; o.alt = `Оригінал фото: ${item.title}. ${item.date || ""}`;
+      const o = new Image(); o.className = "orig"; o.src = item.orig; o.alt = `${tr("Оригінал фото")}: ${item.title}. ${item.date || ""}`;
       w.append(o);
     }
     return w;
@@ -64,9 +64,9 @@
     const live = $("#aiLive");
     live.innerHTML = orig ? ICON_PLAY : ICON_PAUSE;
     live.setAttribute("aria-pressed", String(orig));
-    live.setAttribute("aria-label", orig ? "Оживити фото (ШІ-відео)" : "Пауза: показати оригінал фото");
-    $("#aiLiveTip").textContent = orig ? "Оригінал фото · ▶ — оживити" : "Пауза — показати оригінал фото";
-    $("#printTag").textContent = orig ? "Оригінал фото" : "Оживлено ШІ";
+    live.setAttribute("aria-label", orig ? tr("Оживити фото (ШІ-відео)") : tr("Пауза: показати оригінал фото"));
+    $("#aiLiveTip").textContent = orig ? tr("Оригінал фото · ▶ — оживити") : tr("Пауза — показати оригінал фото");
+    $("#printTag").textContent = orig ? tr("Оригінал фото") : tr("Оживлено ШІ");
   }
 
   function showArchive(i, instant) {
@@ -90,7 +90,7 @@
     }).filter((sp) => sp.textContent));
     if (item.source) {
       const sp = document.createElement("span"), a = document.createElement("a");
-      sp.append("Джерело: ");
+      sp.append(tr("Джерело") + ": ");
       a.href = item.source.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = item.source.label;
       sp.append(a); meta.append(sp);
     }
@@ -107,7 +107,7 @@
     b.className = "mini";
     b.style.left = spots[k % 5][0] + "%"; b.style.top = spots[k % 5][1] + "%";
     b.style.transform = `rotate(${tilt[k % 5]}deg)`;
-    b.setAttribute("aria-label", `Показати: ${item.title}`);
+    b.setAttribute("aria-label", `${tr("Показати")}: ${item.title}`);
     b.innerHTML = `<img src="${item.img}" alt="" loading="lazy">`;
     b.addEventListener("click", () => showArchive(k));
     minis.appendChild(b);
@@ -144,15 +144,15 @@
     const el = document.createElement("article");
     el.className = "obj"; el.id = `obj-${s.n}`;
     el.innerHTML = `
-      <a class="obj-img" href="#object-${s.key}" tabindex="-1" aria-hidden="true"><span class="obj-n">ОБ’ЄКТ ${pad(s.n)}</span><span class="obj-3d mono">3D · AR</span><img src="${s.render}" alt="" loading="lazy"></a>
+      <a class="obj-img" href="#object-${s.key}" tabindex="-1" aria-hidden="true"><span class="obj-n">${tr("ОБ’ЄКТ")} ${pad(s.n)}</span><span class="obj-3d mono">3D · AR</span><img src="${s.render}" alt="" loading="lazy"></a>
       <div class="obj-body">
-        <p class="obj-point">Точка ${s.n} · ${s.addr}</p>
+        <p class="obj-point">${tr("Точка")} ${s.n} · ${s.addr}</p>
         <h3><a href="#object-${s.key}">${s.name}</a></h3>
-        <p class="obj-concept"><span>Концептуальний образ</span>${s.concept}</p>
+        <p class="obj-concept"><span>${tr("Концептуальний образ")}</span>${s.concept}</p>
         <p class="obj-short">${s.short}</p>
         <div class="obj-acts">
-          <a class="line-link sm" href="#object-${s.key}">Відкрити об’єкт <i aria-hidden="true"></i></a>
-          <button class="obj-go mono" data-go="${s.n - 1}">На мапі</button>
+          <a class="line-link sm" href="#object-${s.key}">${tr("Відкрити об’єкт")} <i aria-hidden="true"></i></a>
+          <button class="obj-go mono" data-go="${s.n - 1}">${tr("На мапі")}</button>
         </div>
       </div>`;
     grid.appendChild(el);

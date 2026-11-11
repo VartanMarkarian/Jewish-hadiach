@@ -60,19 +60,19 @@
   const fill = document.createElement("span"); fill.className = "tl-fill"; tl.appendChild(fill);
   STOPS.forEach((s, i) => {
     const li = document.createElement("li");
-    li.innerHTML = `<button aria-label="Точка ${s.n}: ${s.name}"><span class="t-n">${pad(s.n)}</span><span class="t-dot"></span><span class="t-name">${s.name}</span></button>`;
+    li.innerHTML = `<button aria-label="${tr("Точка")} ${s.n}: ${s.name}"><span class="t-n">${pad(s.n)}</span><span class="t-dot"></span><span class="t-name">${s.name}</span></button>`;
     li.querySelector("button").addEventListener("click", () => go(i));
     tl.appendChild(li);
   });
 
   function fillCard(i) {
     const s = STOPS[i];
-    $("#scRender").src = s.render; $("#scRender").alt = `Цифрова скульптура «${s.name}»`;
+    $("#scRender").src = s.render; $("#scRender").alt = `${tr("Цифрова скульптура")} ${qq(s.name)}`;
     $("#scPlaceImg").src = s.place;
     card.querySelector(".sc-media").classList.remove("show-place");
-    $("#scKicker").textContent = `ТОЧКА ${pad(s.n)} · ${s.addr}`;
+    $("#scKicker").textContent = `${tr("ТОЧКА")} ${pad(s.n)} · ${s.addr}`;
     $("#scPoint").textContent = s.name;
-    $("#scObj").textContent = `Концептуальний образ — «${s.concept}»`;
+    $("#scObj").textContent = `${tr("Концептуальний образ")} — ${qq(s.concept)}`;
     $("#scText").textContent = s.short;
     $("#scMore").href = `#object-${s.key}`;
     $("#scSV").href = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${s.ll[1]},${s.ll[0]}`;
@@ -86,23 +86,23 @@
     $("#hudLL").textContent = `${dms(STOPS[i].ll[1], "N", "S")} · ${dms(STOPS[i].ll[0], "E", "W")}`;
     setDist(wp[i]);
     $("#prevBtn").disabled = i === 0;
-    $("#nextBtn").setAttribute("aria-label", i === N - 1 ? "Повернутися на початок" : "Наступна точка");
+    $("#nextBtn").setAttribute("aria-label", i === N - 1 ? tr("Повернутися на початок") : tr("Наступна точка"));
     $("#nextBtn").textContent = i === N - 1 ? "↺" : "→";
     [...tl.querySelectorAll("li")].forEach((li, k) => { li.classList.toggle("cur", k === i); li.classList.toggle("done", k < i); });
     fill.style.width = `${(i / (N - 1)) * (100 - 100 / N)}%`;
     pins.forEach((p, k) => { p.classList.toggle("cur", k === i); p.classList.toggle("done", k < i); });
-    hint.querySelector("span").textContent = i === N - 1 ? "Клікніть, щоб повернутися на початок" : "Клікніть по вулиці, щоб іти далі";
+    hint.querySelector("span").textContent = i === N - 1 ? tr("Клікніть, щоб повернутися на початок") : tr("Клікніть по вулиці, щоб іти далі");
     if (map && map.getLayer("pillars")) map.setPaintProperty("pillars", "fill-extrusion-color", pillarColor(i));
     if (map && city) { city.setActive(i); map.triggerRepaint(); }
   }
-  function setDist(d) { $("#hudDist").textContent = `${Math.round(d)} м з ${Math.round(TOTAL)} м`; }
+  function setDist(d) { $("#hudDist").textContent = `${Math.round(d)} ${tr("м")} ${tr("з")} ${Math.round(TOTAL)} ${tr("м")}`; }
 
   $("#scPlace").addEventListener("click", (e) => {
     const m = card.querySelector(".sc-media"); const on = m.classList.toggle("show-place");
     const s = STOPS[cur];
     $("#scRender").src = on ? s.place : s.render;
     $("#scPlaceImg").src = on ? s.render : s.place;
-    $("#scPlace").setAttribute("aria-label", on ? "Показати об’єкт" : "Показати фото місця");
+    $("#scPlace").setAttribute("aria-label", on ? tr("Показати об’єкт") : tr("Показати фото місця"));
     e.stopPropagation();
   });
   // зображення в картці веде на сторінку об’єкта (на телефоні — найочевидніша ціль для дотику)
@@ -229,9 +229,9 @@
   function makePin(s, i) {
     const el = document.createElement("button");
     el.className = "pin"; el.type = "button";
-    el.setAttribute("aria-label", `Точка ${s.n}: ${s.name} — ${s.concept}`);
+    el.setAttribute("aria-label", `${tr("Точка")} ${s.n}: ${s.name} — ${s.concept}`);
     el.innerHTML = `<span class="pin-rings"></span><span class="pin-dot">${s.n}</span>
-      <span class="pin-label"><small>AR · ТОЧКА ${pad(s.n)}</small>${s.name}</span>
+      <span class="pin-label"><small>AR · ${tr("ТОЧКА")} ${pad(s.n)}</small>${s.name}</span>
       <span class="pin-pop" aria-hidden="true"><img src="${s.render}" alt=""><b>${s.concept}</b><span>${s.short.split(". ").slice(0, 1).join(". ")}.</span></span>`;
     el.addEventListener("click", (e) => { e.stopPropagation(); go(i); });
     el.addEventListener("mouseenter", () => {
@@ -252,9 +252,9 @@
       minZoom: LOCAL ? 13 : 0, maxBounds: LOCAL ? [[33.955, 50.35], [34.03, 50.392]] : undefined,
       cooperativeGestures: true, doubleClickZoom: false, attributionControl: false,
       locale: {
-        "CooperativeGesturesHandler.WindowsHelpText": "Ctrl + коліщатко — масштаб мапи",
-        "CooperativeGesturesHandler.MacHelpText": "⌘ + коліщатко — масштаб мапи",
-        "CooperativeGesturesHandler.MobileHelpText": "Двома пальцями — рух мапи"
+        "CooperativeGesturesHandler.WindowsHelpText": tr("Ctrl + коліщатко — масштаб мапи"),
+        "CooperativeGesturesHandler.MacHelpText": tr("⌘ + коліщатко — масштаб мапи"),
+        "CooperativeGesturesHandler.MobileHelpText": tr("Двома пальцями — рух мапи")
       }
     });
   } catch (err) {

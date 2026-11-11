@@ -34,6 +34,7 @@ const TEXT = {
 
 /* ---------- спільне для всіх сеансів ---------- */
 let K = null;
+const t = (s) => (window.tr ? window.tr(s) : s);   // переклад інтерфейсу (js/i18n.js)
 function kit() {
   if (K) return K;
   const ui = document.createElement("div");
@@ -49,8 +50,8 @@ function kit() {
     .xr-ui .xr-msg span{display:inline-block;background:#000a;border-radius:14px;padding:10px 14px;max-width:420px}
     .xr-ui .xr-again{position:absolute;right:14px;bottom:max(92px,calc(env(safe-area-inset-bottom) + 64px))}
   </style>
-  <div class="xr-top"><b></b><button class="xr-close" type="button">Вийти</button></div>
-  <button class="xr-again" type="button" hidden>Поставити деінде</button>
+  <div class="xr-top"><b></b><button class="xr-close" type="button">${t("Вийти")}</button></div>
+  <button class="xr-again" type="button" hidden>${t("Поставити деінде")}</button>
   <div class="xr-msg"><span></span></div>`;
   document.body.appendChild(ui);
   // натискання на кнопки не повинні ставити об’єкт
@@ -128,7 +129,7 @@ export async function start({ url, lift = 0, title = "", onEnd = () => {} }) {
   if (k.busy) return;
   k.busy = true;
   const { ui, renderer, scene, sun, reticle, anchorGroup, spin, shadow, loader, camera } = k;
-  const msg = (t) => { ui.querySelector(".xr-msg span").textContent = t; };
+  const msg = (s) => { ui.querySelector(".xr-msg span").textContent = t(s); };
   const btnAgain = ui.querySelector(".xr-again");
   ui.querySelector("b").textContent = title;
   btnAgain.hidden = true;

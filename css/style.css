@@ -56,6 +56,12 @@ button { font: inherit; color: inherit; }
 .nav { display: flex; align-items: center; gap: 8px; }
 .nav a { display: inline-flex; align-items: center; padding: 7px 16px; border: 1px solid transparent; border-radius: 20px; line-height: 1.2; text-decoration: none; font-size: 14px; color: rgba(216,209,197,.8); transition: border-color .2s, background .2s, color .2s; }
 .nav a:hover { color: var(--lav); }
+/* перемикач мов UA / EN — праворуч у шапці */
+.nav { margin-left: auto; }
+.lang { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; letter-spacing: .08em; color: rgba(216,209,197,.45); white-space: nowrap; }
+.lang a { padding: 6px 7px; border-radius: 14px; text-decoration: none; color: rgba(216,209,197,.62); transition: color .2s, background .2s; }
+.lang a:hover { color: var(--lav); }
+.lang a.on { color: var(--indigo-0); background: var(--paper); }
 .menu-btn { display: none; background: none; border: 0; font-size: 14px; cursor: pointer; align-items: center; gap: 12px; }
 .menu-btn i, .menu-btn i::after { display: block; width: 20px; height: 1.5px; background: currentColor; position: relative; }
 .menu-btn i { box-shadow: 0 -5px 0 currentColor; top: 2px; }
@@ -96,6 +102,9 @@ button { font: inherit; color: inherit; }
 .hero-title span { display: block; white-space: nowrap; }
 .hero-title .l2 { padding-left: .9em; }
 .hero-title em { font-style: normal; color: var(--lav); }
+/* англійська назва довша («layers of memory») — менший кегль, щоб не виходила за екран */
+html[lang="en"] .hero-title { font-size: clamp(48px, 5.6vw, 96px); }
+html[lang="en"] .hero-title .l2 { padding-left: .5em; }
 .hero-panel {
   position: absolute; left: 0; bottom: 0; width: min(29vw, 380px); min-height: 50vh;
   background: var(--paper); color: var(--ink);
@@ -831,11 +840,16 @@ b.rl { font-weight: 700; }
   .nav a { font-size: 26px; font-family: var(--f-display); }
   .nav.open { opacity: 1; pointer-events: auto; }
   .menu-btn { display: inline-flex; position: relative; z-index: 2; }
+  .lang { margin-left: auto; position: relative; z-index: 2; }
+  .top { gap: 14px; }
+  .lang a { padding: 6px 5px; }
   .brand { font-size: 10.5px; letter-spacing: .24em; position: relative; z-index: 2; }
 
   .hero { display: flex; flex-direction: column; justify-content: flex-end; }
   .hero-title { position: relative; left: auto; top: auto; transform: none; padding: 32vh var(--gutter) 40px; font-size: clamp(48px, 15vw, 76px); }
   .hero-title .l2 { padding-left: .5em; }
+  html[lang="en"] .hero-title { font-size: clamp(36px, 10.5vw, 64px); }
+  html[lang="en"] .hero-title .l2 { padding-left: .3em; }
   .hero-panel { position: relative; width: auto; min-height: 0; margin-right: 22%; padding: 32px 24px 36px; }
   .hero-side { bottom: 24px; }
 
@@ -898,4 +912,10 @@ b.rl { font-weight: 700; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .grain, .pin.cur .pin-rings, .map-hint i::after, .hero-photo, .contours.pulse { animation: none; }
+}
+
+/* вузькі телефони: шапка «бренд · UA/EN · меню» в один рядок — підпис «Меню» лишається для читачів екрана, видно лише іконку */
+@media (max-width: 420px) {
+  .menu-btn { font-size: 0; gap: 0; padding: 8px 0 8px 6px; }
+  html[lang="en"] .brand { letter-spacing: .16em; }
 }
