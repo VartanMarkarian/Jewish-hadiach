@@ -1,5 +1,5 @@
 /* Невидимі шари пам’яті — власний AR-режим (WebXR, Chrome на Android).
-   Торкнулися підлоги — об’єкт з’являється в цій точці й закріплюється (XR-якір). Далі його не можна
+   Торкнулися підлоги — об’єкт з’являється в цій точці й стоїть нерухомо (як у model-viewer, без XR-якорів: їх видалення після виходу валило вкладку). Далі його не можна
    ні посунути, ні збільшити: проведення пальцем лише обертає навколо вертикальної осі, людина обходить об’єкт.
    Моделі вже в реальному розмірі (tools/ar_scale.py); lift — підйом над підлогою в метрах.
    iPhone не має WebXR — там лишається Quick Look через model-viewer.
@@ -102,7 +102,13 @@ function kit() {
   ui.addEventListener("pointermove", (e) => { if (px !== null) { spin.rotation.y += (e.clientX - px) * 0.012; px = e.clientX; } });
   ui.addEventListener("pointerup", () => { px = null; });
   ui.addEventListener("pointercancel", () => { px = null; });
-  ui.querySelector(".xr-close").addEventListener("click", () => { if (K.sess) K.sess.session.end().catch(() => {}); });
+  ui.querySelector(".xr-close").addEventListener("click", () => {
+    const S = K.sess;
+    if (!S) return;
+    // усе, що належить сесії, прибираємо ДО її закриття — після end() ці об’єкти недійсні
+    if (S.hitSource) { try { S.hitSource.cancel(); } catch {} S.hitSource = null; }
+    S.session.end().catch(() => {});
+  });
   ui.querySelector(".xr-again").addEventListener("click", () => { if (K.sess) K.sess.again(); });
   return K;
 }
@@ -131,13 +137,13 @@ export async function start({ url, lift = 0, title = "", onEnd = () => {} }) {
   msg(TEXT.load);
   ui.hidden = false;
 
-  const S = { state: "load", session: null, hitSource: null, anchor: null, lastHit: null, model: null, mixer: null, ended: false };
+  const S = { state: "load", session: null, hitSource: null, lastHit: null, model: null, mixer: null, ended: false };
 
   /* ---------- сесія — першою, поки діє дозвіл від натискання ---------- */
   try {
     S.session = await navigator.xr.requestSession("immersive-ar", {
       requiredFeatures: ["hit-test"],
-      optionalFeatures: ["dom-overlay", "anchors", "local-floor"],
+      optionalFeatures: ["dom-overlay", "local-floor"],
       domOverlay: { root: ui },
     });
   } catch (e) {
@@ -159,8 +165,7 @@ export async function start({ url, lift = 0, title = "", onEnd = () => {} }) {
       renderer.setAnimationLoop(null);
       renderer.domElement.style.display = "none";
       ui.hidden = true;
-      if (S.hitSource) { try { S.hitSource.cancel(); } catch {} }
-      if (S.anchor) { try { S.anchor.delete(); } catch {} }
+      S.hitSource = null;   // сесія вже закрита: нічого з її об’єктами не робимо (виклики після end() валили вкладку)
       if (S.mixer) { S.mixer.stopAllAction(); S.mixer.uncacheRoot(S.model); }
       if (S.model) { spin.remove(S.model); disposeModel(S.model); }
       if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; }
@@ -192,15 +197,6 @@ export async function start({ url, lift = 0, title = "", onEnd = () => {} }) {
         if (S.state === "scan") { S.state = "aim"; msg(TEXT.aim); }
       } else {
         reticle.visible = false;
-      }
-    }
-    if (S.state === "placed" && S.anchor && frame.trackedAnchors && frame.trackedAnchors.has(S.anchor)) {
-      // якір уточнюється разом із картою простору: дрібні поправки — плавно, великі — одразу
-      const p = frame.getPose(S.anchor.anchorSpace, refSpace);
-      if (p) {
-        target.set(p.transform.position.x, p.transform.position.y, p.transform.position.z);
-        if (target.distanceTo(anchorGroup.position) > 0.35) anchorGroup.position.copy(target);
-        else anchorGroup.position.lerp(target, 0.2);
       }
     }
     renderer.render(scene, camera);
@@ -250,9 +246,6 @@ export async function start({ url, lift = 0, title = "", onEnd = () => {} }) {
     reticle.visible = false;
     sun.position.set(p.x + 2, p.y + 6, p.z + 3);
     sun.target.position.set(p.x, p.y, p.z);
-    if (S.lastHit.createAnchor) {
-      S.lastHit.createAnchor().then((a) => { if (S.state === "placed" && !S.anchor && !S.ended) S.anchor = a; else a.delete(); }).catch(() => {});
-    }
     if (S.hitSource) { S.hitSource.cancel(); S.hitSource = null; }
     S.state = "placed";
     btnAgain.hidden = false;
@@ -261,7 +254,6 @@ export async function start({ url, lift = 0, title = "", onEnd = () => {} }) {
   session.addEventListener("select", () => { if (S.state === "aim") place(); });
 
   S.again = async () => {
-    if (S.anchor) { S.anchor.delete(); S.anchor = null; }
     anchorGroup.visible = false;
     btnAgain.hidden = true;
     S.lastHit = null;

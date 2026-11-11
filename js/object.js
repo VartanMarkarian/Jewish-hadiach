@@ -24,26 +24,8 @@
      Модуль вантажимо заздалегідь: сесію браузер дозволяє відкрити тільки одразу після натискання. */
   let xr = null;
 
-  /* Усі інші WebGL-контексти сторінки (мапа MapLibre, model-viewer) перед AR гасимо: закриття AR-сесії поруч
-     із живими контекстами у фреймі claude.ai валило вкладку («сірий екран»). Після виходу сторінка перезавантажується. */
-  const glCtx = new Set();
-  const getCtx = HTMLCanvasElement.prototype.getContext;
-  HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
-    const c = getCtx.call(this, type, ...rest);
-    if (c && /webgl/.test(type) && this.dataset.xr !== "1") glCtx.add(c);
-    return c;
-  };
-  function dropOtherGL() {
-    document.querySelectorAll("canvas").forEach((cv) => {
-      if (cv.dataset.xr === "1") return;
-      const c = getCtx.call(cv, "webgl2") || getCtx.call(cv, "webgl");
-      if (c) glCtx.add(c);
-    });
-    glCtx.forEach((c) => { try { if (!c.isContextLost()) { const e = c.getExtension("WEBGL_lose_context"); if (e) e.loseContext(); } } catch {} });
-  }
-
   if (navigator.xr) navigator.xr.isSessionSupported("immersive-ar")
-    .then((ok) => ok && import(new URL("js/ar-xr.js?v=16a46a22", location.href).href).then((m) => { xr = m; }))
+    .then((ok) => ok && import(new URL("js/ar-xr.js?v=2d173d3e", location.href).href).then((m) => { xr = m; }))
     .catch(() => {});
 
   /* ---------- model-viewer вантажимо лише коли відкрито сторінку об’єкта ---------- */
@@ -102,7 +84,6 @@
       // Натомість чисте перезавантаження сторінки — вона відкриється на цьому ж об’єкті (#object-<key>).
       const restore = () => { if (curModel && curModel.url === src && !mv.getAttribute("src")) mv.setAttribute("src", src); };
       mv.removeAttribute("src");
-      dropOtherGL();
       xr.start({ url: src, lift: LIFT[curModel.key] || 0, title: s.name, onEnd: () => setTimeout(() => location.reload(), 300) }).catch(restore);
     }, true);
     $("#opMV").appendChild(mv);
