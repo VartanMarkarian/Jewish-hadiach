@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vartanmarkarian.github.io/Jewish-hadiach/sitemap.xml

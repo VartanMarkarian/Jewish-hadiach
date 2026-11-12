@@ -92,7 +92,9 @@
   /* ---------- аудіоверсія: кілька файлів (до ~6 хв) як одна доріжка ----------
      Кожен файл беремо повністю як blob — сервер claude.ai не віддає частини (Range), без цього не працює перемотування.
      У публікації build_publish.py дає файлам імена з хешем: window.AUDIO_FILES["research/ua_01"]. */
-  const RA = window.RESEARCH_AUDIO;
+  // англійською — своя озвучка (George), якщо вона є; інакше українська
+  const RA_EN = window.LANG === "en" && window.RESEARCH_AUDIO_EN;
+  const RA = RA_EN || window.RESEARCH_AUDIO;
   const ra = { el: $("#rAudioEl"), box: $("#rAudio"), btn: $("#rPlay"), bar: $("#rAudBar"), fill: $("#rAudFill"),
     time: $("#rAudTime"), info: $("#rAudInfo"), speedBtn: $("#rSpeed"), chap: $("#rChap") };
   let raPause = () => {};
@@ -110,7 +112,7 @@
     const segAt = (g) => { let k = 0; while (k < F.length - 1 && g >= start[k + 1]) k++; return k; };
     let cur = -1, pos = 0, want = false, speed = 1, busy = 0;
 
-    ra.info.textContent = `${fmt(T)} · ${tr("українською")} · ${tr("ШІ-голос")}`;
+    ra.info.textContent = `${fmt(T)} · ${RA_EN ? "in English" : tr("українською")} · ${tr("ШІ-голос")}`;
     ra.time.textContent = fmt(T);
     ra.box.hidden = false;
     // розділи: кнопки й позначки на шкалі

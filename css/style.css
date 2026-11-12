@@ -919,3 +919,8 @@ b.rl { font-weight: 700; }
   .menu-btn { font-size: 0; gap: 0; padding: 8px 0 8px 6px; }
   html[lang="en"] .brand { letter-spacing: .16em; }
 }
+
+/* футер: автори проєкту */
+.foot-credits { padding-top: 26px; padding-bottom: 4px; display: flex; flex-wrap: wrap; gap: 6px 36px; }
+.foot-credits p { margin: 0; font-size: 15px; line-height: 1.5; color: rgba(216, 209, 197, .85); }
+.foot-credits b { font-weight: 500; color: var(--paper); }
